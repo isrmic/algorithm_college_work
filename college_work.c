@@ -100,17 +100,59 @@ int main(void){
 				}
 				printf("\n\n");
 			break;
+			
+			case 2:
+				
+				do{
+
+					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
+					scanf("%d", &num_flight);
+					
+					if(num_flight <= 0 || num_flight > 4){
+					
+						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
+						isOk = false;
+					}
+					
+					else{
+						
+						printf("\ninsira o numero do assento que deseja verificar : ");
+						scanf("%d", &num_seat);	
+						
+						if(num_seat < 0 || num_seat > 37 ){
+						
+							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
+							isOk = false;
+						}
+							
+						else{
+							
+							if(flights[num_flight-1][num_seat] == false){
+							
+								printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+								isOk = false;
+							}else{
+								printf("Este Assento Está Livre . \n\n");
+								isOk = true;
+							}
+							
+						}
+					}
+					
+				}while(isOk != true && num_flight != -1);
+				
+			break;
 				
 			case 3:
 					
 				do{
 
-					printf("\n\ninsira o numero do VOO : ");
+					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
 					scanf("%d", &num_flight);
 					
 					if(num_flight <= 0 || num_flight > 4){
 					
-						printf("Número De Voo Inexistente , tente novamente . \n");
+						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
 						isOk = false;
 					}
 					
@@ -141,14 +183,67 @@ int main(void){
 						}
 					}
 					
-				}while(isOk != true);
+				}while(isOk != true && num_flight != -1);
 				printf("\n");							
 			break;
+			
+			case 4:
+				
+				do{
+
+					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
+					scanf("%d", &num_flight);
+					
+					if(num_flight <= 0 || num_flight > 4){
+					
+						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
+						isOk = false;
+					}
+					
+					else{
+						
+						printf("\ninsira o numero do assento que deseja cancelar a reserva : ");
+						scanf("%d", &num_seat);	
+						
+						if(num_seat < 0 || num_seat > 37 ){
+						
+							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
+							isOk = false;
+						}
+							
+						else{
+							
+							if(flights[num_flight-1][num_seat] == true){
+							
+								printf("Este Assento Não Está Ocupado , Escolha Outro Por Favor .\n");
+								isOk = false;
+							}
+								
+							else{
+							
+								flights[num_flight-1][num_seat] = true;
+								isOk = true;
+							}
+						}
+					}
+					
+				}while(isOk != true && num_flight != -1);
+				printf("\n");
+				
+			break;
+			
+			default:
+				printf(option != 5 ? "\nopção '%d' inexistente , tente novamente . \n\n" : "\n", option);
 		}
 		
 	}while(option != 5);
 	
+	printf("\nObrigado por utilizar a linha Aviação Trem dePouso, tenha um bom dia .\n");
 	printf("\naperte qualquer tecla para sair !");
-	return 0;
+	
+	/*
+		system("pause");
+		return 0;
+	*/
 }	
 
