@@ -12,22 +12,20 @@ void setColor(char * Color){
     CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
     WORD saved_attributes;
 	
-		if(strcmp(Color, "RED") == 0){
-			SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
-		}
-		
-		else if(strcmp(Color, "GREEN") == 0){
-			SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
-		}
-		
-		else if(strcmp(Color, "BLUE") == 0){
-			SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
-		}
-		else if(strcmp(Color, "DEFAULT") == 0){
-			SetConsoleTextAttribute(hConsole, 15);
-		}
-
-
+	if(strcmp(Color, "RED") == 0){
+		SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+	}
+	
+	else if(strcmp(Color, "GREEN") == 0){
+		SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+	}
+	
+	else if(strcmp(Color, "BLUE") == 0){
+		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
+	}
+	else if(strcmp(Color, "DEFAULT") == 0){
+		SetConsoleTextAttribute(hConsole, 15);
+	}
 
 }
 
@@ -36,10 +34,9 @@ int main(void){
 	setlocale(LC_ALL, "portuguese");
 	
 	
-	
 	int option, i, j, k, count, num_flight, num_seat;
 	
-	bool flights[4][38];
+	bool flights[4][38], isOk;
 	
 	for(k = 0; k < 38; k++){
 		
@@ -53,14 +50,14 @@ int main(void){
 	int size_flights = sizeof(flights) / sizeof(flights[0]);
 	int size_flights_2 = sizeof(flights[0]) / sizeof(flights[0][0]);
 	
-	char * options[5] = { "0 - Consultar Trechos", "1 - Consultar assentos", "2 - Efetuar reserva", "3 - Cancelar reserva", "4 - Finalizar atendimento"};
+	char * options[5] = { "1 - Consultar Trechos", "2 - Consultar assentos", "3 - Efetuar reserva", "4 - Cancelar reserva", "5 - Finalizar atendimento"};
 	
 	// declaração de variavel size para obter o valor do tamanho  do array, e variavel i para ser o contador no for
 	int size = sizeof(options) / sizeof(options[0]);
 	
 	do{
 	
-		printf("Escolha uma opção ? \n");
+		printf("Escolha uma opção ? \n\n");
 		
 		/*
 			Menu De Opções ...
@@ -77,7 +74,7 @@ int main(void){
 		
 		switch(option){
 			
-			case 0:
+			case 1:
 				
 				/* LISTA DO VOOS */
 				
@@ -93,7 +90,7 @@ int main(void){
 						setColor("RED");
 						
 					if(count == 10){
-						printf("%d%s   \n\n", j,flights[i][j] == true ? "[L]" : "[R]");
+						printf("%d%s   \n\n", j, flights[i][j] == true ? "[L]" : "[R]");
 						count = 0;
 					}
 					else
@@ -101,18 +98,57 @@ int main(void){
 					}
 					setColor("DEFAULT");
 				}
-				printf("insira o numero do VOO : ");
-				scanf("%d", &num_flight);
-				printf("insira o numero do assendo em que quer reservar : ");
-				scanf("%d", &num_seat);	
+				printf("\n\n");
+			break;
 				
-				flights[num_flight-1][num_seat] = false;
-										
-				
+			case 3:
+					
+				do{
+
+					printf("\n\ninsira o numero do VOO : ");
+					scanf("%d", &num_flight);
+					
+					if(num_flight <= 0 || num_flight > 4){
+					
+						printf("Número De Voo Inexistente , tente novamente . \n");
+						isOk = false;
+					}
+					
+					else{
+						
+						printf("\ninsira o numero do assento em que quer reservar : ");
+						scanf("%d", &num_seat);	
+						
+						if(num_seat < 0 || num_seat > 37 ){
+						
+							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
+							isOk = false;
+						}
+							
+						else{
+							
+							if(flights[num_flight-1][num_seat] == false){
+							
+								printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+								isOk = false;
+							}
+								
+							else{
+							
+								flights[num_flight-1][num_seat] = false;
+								isOk = true;
+							}
+						}
+					}
+					
+				}while(isOk != true);
+				printf("\n");							
 			break;
 		}
-	}while(option != 4);
+		
+	}while(option != 5);
 	
+	printf("\naperte qualquer tecla para sair !");
 	return 0;
 }	
 
