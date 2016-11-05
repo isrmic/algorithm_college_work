@@ -34,6 +34,17 @@ void setColor(char * Color){
 
 }
 
+
+bool in_array_bool(bool condiction, bool * param){
+	int size = sizeof(param) / sizeof(param[0]), i;
+	for(i = 0; i < size; i++){
+		if(param[i] == condiction)
+			return true;
+	}
+	return false;
+	
+}
+
 int main(void){
 	
 	setlocale(LC_ALL, "portuguese");
@@ -45,10 +56,10 @@ int main(void){
 	
 	for(k = 0; k < 38; k++){
 		
-		flights[0][k] = "true";
-		flights[1][k] = "true";
-		flights[2][k] = "true";
-		flights[3][k] = "true";
+		flights[0][k] = true;
+		flights[1][k] = true;
+		flights[2][k] = true;
+		flights[3][k] = true;
 		
 	}
 	
@@ -174,31 +185,42 @@ int main(void){
 					}
 					
 					
+					
 					else{
 						
-						printf("\ninsira o numero do assento que deseja reservar : ");
-						scanf("%d", &num_seat);	
+						bool hasVacancy = in_array_bool(true, flights[num_flight-1]);
 						
-						if(num_seat <= 0 || num_seat > 37 ){
-						
-							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
-							isOk = false;
+						if(!hasVacancy){
+							printf("Este Voo Não Possui Mais Vagas .");
 						}
+						
+						else					
+						{							
+						
+							printf("\ninsira o numero do assento que deseja reservar : ");
+							scanf("%d", &num_seat);	
 							
-						else{
+							if(num_seat <= 0 || num_seat > 37 ){
 							
-							if(flights[num_flight-1][num_seat-1] == false){
-							
-								printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+								printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
 								isOk = false;
 							}
 								
 							else{
-							
-								flights[num_flight-1][num_seat-1] = false;
-								isOk = true;
 								
-								access += 1;
+								if(flights[num_flight-1][num_seat-1] == false){
+								
+									printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+									isOk = false;
+								}
+									
+								else{
+								
+									flights[num_flight-1][num_seat-1] = false;
+									isOk = true;
+									
+									access += 1;
+								}
 							}
 						}
 					}
