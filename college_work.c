@@ -5,65 +5,81 @@
 #include <windows.h>
 #include <stdbool.h>
 
-
+// funcao para setar uma cor para a fonte do console
 void setColor(char * Color){
 	
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
     WORD saved_attributes;
 	
+	//Cor vermelha
 	if(strcmp(Color, "RED") == 0){
 		SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
 	}
 	
+	//Cor Verde
 	else if(strcmp(Color, "GREEN") == 0){
 		SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
 	}
 	
+	//Cor Azul
 	else if(strcmp(Color, "BLUE") == 0){
 		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
 	}
 	
+	//Cor amarela
 	else if(strcmp(Color, "YELLOW") == 0){
 		SetConsoleTextAttribute(hConsole, 6);
 	}
 	
+	//Cor Padrão white(branco)
 	else if(strcmp(Color, "DEFAULT") == 0){
 		SetConsoleTextAttribute(hConsole, 15);
 	}
 
 }
 
-
+//funcao para verificar em um array booleano se existe X condicao , sendo ela true ou false ...
 bool in_array_bool(bool condiction, bool * param){
 	int size = sizeof(param) / sizeof(param[0]), i;
 	for(i = 0; i < size; i++){
 		if(param[i] == condiction)
 			return true;
 	}
+	
+	//caso nao seja encontrado nenhuma condicao no array da qual foi passado por parametro retorna false
 	return false;
 	
 }
 
+
+//funcao para imprimir a lista de lugares de determinado VOO 
 void showSeats(int size, bool * flights){
 	
 	int j, count, seat_vip;
 	for(j = 0, count = 1,seat_vip = 1; j < size; j++,count++,seat_vip++){
 						
+						//se as poltronas não forem de primeira classe e não estiverem ocupadas são coloridas de verde
 						if(flights[j] == true && seat_vip >8)
 							setColor("GREEN");
-							
+						
+						//se as poltronas são de primeira classe e não estão ocupadas são coloridas de amarelo
 						else if(seat_vip <= 8 && flights[j] != false)
 							setColor("YELLOW");
-							
+						
+						// Não sendo nenhum dos casos acima colore de vermelho , pois está reservada
 						else
 							setColor("RED");
-							
+						
+						// se ja foram 8 poltronas impressas haverá uma quebra de linha , isso a cada 8 poltronas impressas
 						if(count == 8){
 							
 							printf("%d%s   \n\n", j+1, flights[j] == true ? "[L]" : "[R]");
+							
+							//seta o numero de poltronas impressas para 0 para retornar a imprimir uma ao lado da outra
 							count = 0;
 						}
+						// caso não forem 8 ao todo impressas continuam imprimindo uma ao lado da outra .
 						else
 							printf("%d%s   ", j+1, flights[j] == true ? "[L]" : "[R]");
 						}
@@ -73,13 +89,14 @@ int main(void){
 	
 	setlocale(LC_ALL, "portuguese");
 	
-	
+	// declaracao de variaveis iniciais
 	int option, i, j, k, count, seat_vip, num_flight, num_seat, access = 0, confirm;
 	
 	double value_passage;
 	
 	bool flights[4][38], isOk;
 	
+	//preenchimento dos lugares , sendo inicialmente quando compilar e executar o codigo true para todos (todos lugares disponiveis)
 	for(k = 0; k < 38; k++){
 		
 		flights[0][k] = true;
@@ -89,6 +106,7 @@ int main(void){
 		
 	}
 	
+	//abaixo pegamos o tamanho do array (não em bytes) e o tamanho de cada indice do array
 	int size_flights = sizeof(flights) / sizeof(flights[0]);
 	int size_flights_2 = sizeof(flights[0]) / sizeof(flights[0][0]);
 	
@@ -114,6 +132,7 @@ int main(void){
 		printf("opção escolhida : ");
 		scanf("%d", &option);
 		
+		//aqui usa-se switch case para filtrar as opcoes que foram dadas na entrada do usuário
 		switch(option){
 			
 			case 1:
@@ -132,6 +151,7 @@ int main(void){
 				
 			break;
 			
+			/* Aqui verifica-se os lugares dos voos e lista os para o usuário */
 			case 2:
 				
 				do{
@@ -159,10 +179,12 @@ int main(void){
 				}while(isOk != true && num_flight != -1);
 				
 			break;
-				
+			
+			/* Aqui é feito a reserva das poltronas podendo reservar no maximo duas vezes por cada acesso */
 			case 3:
 				
 				value_passage = 0;
+				//repete-se a escolha de opcoes caso a entrada for diferente de -1 e não estiver Ok a reserva de poltronas
 				do{
 					
 					
@@ -233,8 +255,10 @@ int main(void){
 								
 			break;
 			
+			/* Aqui é aonde o usuário cancela uma reserva feito indicando o VOO e o numero do lugar reservado */
 			case 4:
 				
+				// estrutura de repeticao , repete-se caso não for -1 a entrada do usuário ou não estiver Ok a cancela da reserva .
 				do{
 
 					printf("\n\ninsira o numero do VOO ou -1 para voltar ao menu : ");
@@ -278,15 +302,18 @@ int main(void){
 				
 			break;
 			
+			/* Caso nenhuma das opcoes acima tiver sido a entrada então puala para cá e retorna para o menu de opcoes logo em seguida */
 			default:
 				printf(option != 5 ? "\nopção '%d' inexistente , tente novamente . \n\n" : "\n", option);
 		}
 		
 	}while(option != 5);
 	
+	// ao finalizar toda a tarefa não tendo mais neccessidade de fazer algo no sistema o usuário pula para cá e pode-se finalizar o programa...
 	printf("\nObrigado por utilizar a linha Aviação Trem de Pouso, tenha um bom dia .\n");
 	printf("\naperte qualquer tecla para sair !");
 	
+	//comentado por causa de outros dev c++ que não precisam de system("pause") e return 0 ...
 	/*
 		system("pause");
 		return 0;
