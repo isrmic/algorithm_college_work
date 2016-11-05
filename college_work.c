@@ -23,6 +23,11 @@ void setColor(char * Color){
 	else if(strcmp(Color, "BLUE") == 0){
 		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
 	}
+	
+	else if(strcmp(Color, "YELLOW") == 0){
+		SetConsoleTextAttribute(hConsole, 6);
+	}
+	
 	else if(strcmp(Color, "DEFAULT") == 0){
 		SetConsoleTextAttribute(hConsole, 15);
 	}
@@ -34,7 +39,7 @@ int main(void){
 	setlocale(LC_ALL, "portuguese");
 	
 	
-	int option, i, j, k, count, num_flight, num_seat;
+	int option, i, j, k, count, seat_vip, num_flight, num_seat, access = 0, confirm;
 	
 	bool flights[4][38], isOk;
 	
@@ -57,7 +62,7 @@ int main(void){
 	
 	do{
 	
-		printf("Escolha uma opção ? \n\n");
+		printf("Escolha uma opção : \n\n");
 		
 		/*
 			Menu De Opções ...
@@ -76,29 +81,36 @@ int main(void){
 			
 			case 1:
 				
-				/* LISTA DO VOOS */
+				/* LISTA DOS VOOS */
 				
 				for(i = 0; i < size_flights; i++){
 					
 					printf("\n\nVOO %d : \n\n", i+1);
 					
-					for(j = 0, count = 1; j < size_flights_2; j++,count++){
+					for(j = 0, count = 1,seat_vip = 1; j < size_flights_2; j++,count++,seat_vip++){
 					
-					if(flights[i][j] == true)
+					if(flights[i][j] == true && seat_vip >8)
 						setColor("GREEN");
+						
+					else if(seat_vip <= 8 && flights[i][j] != false)
+						setColor("YELLOW");
+						
 					else
 						setColor("RED");
 						
-					if(count == 10){
-						printf("%d%s   \n\n", j, flights[i][j] == true ? "[L]" : "[R]");
+					if(count == 8){
+						
+						printf("%d%s   \n\n", j+1, flights[i][j] == true ? "[L]" : "[R]");
 						count = 0;
 					}
 					else
-						printf("%d%s   ", j, flights[i][j] == true ? "[L]" : "[R]");
+						printf("%d%s   ", j+1, flights[i][j] == true ? "[L]" : "[R]");
 					}
 					setColor("DEFAULT");
 				}
+				
 				printf("\n\n");
+				
 			break;
 			
 			case 2:
@@ -113,31 +125,35 @@ int main(void){
 						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
 						isOk = false;
 					}
-					
+							
 					else{
 						
-						printf("\ninsira o numero do assento que deseja verificar : ");
-						scanf("%d", &num_seat);	
+						printf("\n\nVOO %d : \n\n", num_flight);
+				
+						for(j = 0, count = 1,seat_vip = 1; j < size_flights_2; j++,count++,seat_vip++){
 						
-						if(num_seat < 0 || num_seat > 37 ){
+						if(flights[num_flight-1][j] == true && seat_vip >8)
+							setColor("GREEN");
+							
+						else if(seat_vip <= 8 && flights[num_flight-1][j] != false)
+							setColor("YELLOW");
+							
+						else
+							setColor("RED");
+							
+						if(count == 8){
+							
+							printf("%d%s   \n\n", j+1, flights[num_flight-1][j] == true ? "[L]" : "[R]");
+							count = 0;
+						}
+						else
+							printf("%d%s   ", j+1, flights[num_flight-1][j] == true ? "[L]" : "[R]");
+						}
+						setColor("DEFAULT");
 						
-							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
-							isOk = false;
-						}
-							
-						else{
-							
-							if(flights[num_flight-1][num_seat] == false){
-							
-								printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
-								isOk = false;
-							}else{
-								printf("Este Assento Está Livre . \n\n");
-								isOk = true;
-							}
-							
-						}
 					}
+					
+					printf("\n\n");
 					
 				}while(isOk != true && num_flight != -1);
 				
@@ -146,7 +162,8 @@ int main(void){
 			case 3:
 					
 				do{
-
+					
+					
 					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
 					scanf("%d", &num_flight);
 					
@@ -156,12 +173,13 @@ int main(void){
 						isOk = false;
 					}
 					
+					
 					else{
 						
-						printf("\ninsira o numero do assento em que quer reservar : ");
+						printf("\ninsira o numero do assento que deseja reservar : ");
 						scanf("%d", &num_seat);	
 						
-						if(num_seat < 0 || num_seat > 37 ){
+						if(num_seat <= 0 || num_seat > 37 ){
 						
 							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
 							isOk = false;
@@ -169,7 +187,7 @@ int main(void){
 							
 						else{
 							
-							if(flights[num_flight-1][num_seat] == false){
+							if(flights[num_flight-1][num_seat-1] == false){
 							
 								printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
 								isOk = false;
@@ -177,21 +195,29 @@ int main(void){
 								
 							else{
 							
-								flights[num_flight-1][num_seat] = false;
+								flights[num_flight-1][num_seat-1] = false;
 								isOk = true;
+								
+								access += 1;
 							}
 						}
 					}
 					
-				}while(isOk != true && num_flight != -1);
-				printf("\n");							
+					
+					
+				}while(isOk != true && num_flight != -1 || num_flight != -1 && access != 2);
+				
+				access = 0;
+				
+				printf("\n");		
+								
 			break;
 			
 			case 4:
 				
 				do{
 
-					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
+					printf("\n\ninsira o numero do VOO ou -1 para voltar ao menu : ");
 					scanf("%d", &num_flight);
 					
 					if(num_flight <= 0 || num_flight > 4){
@@ -205,7 +231,7 @@ int main(void){
 						printf("\ninsira o numero do assento que deseja cancelar a reserva : ");
 						scanf("%d", &num_seat);	
 						
-						if(num_seat < 0 || num_seat > 37 ){
+						if(num_seat <= 0 || num_seat > 37 ){
 						
 							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
 							isOk = false;
@@ -213,7 +239,7 @@ int main(void){
 							
 						else{
 							
-							if(flights[num_flight-1][num_seat] == true){
+							if(flights[num_flight-1][num_seat-1] == true){
 							
 								printf("Este Assento Não Está Ocupado , Escolha Outro Por Favor .\n");
 								isOk = false;
@@ -221,7 +247,7 @@ int main(void){
 								
 							else{
 							
-								flights[num_flight-1][num_seat] = true;
+								flights[num_flight-1][num_seat-1] = true;
 								isOk = true;
 							}
 						}
@@ -238,7 +264,7 @@ int main(void){
 		
 	}while(option != 5);
 	
-	printf("\nObrigado por utilizar a linha Aviação Trem dePouso, tenha um bom dia .\n");
+	printf("\nObrigado por utilizar a linha Aviação Trem de Pouso, tenha um bom dia .\n");
 	printf("\naperte qualquer tecla para sair !");
 	
 	/*
