@@ -45,12 +45,38 @@ bool in_array_bool(bool condiction, bool * param){
 	
 }
 
+void showSeats(int size, bool * flights){
+	
+	int j, count, seat_vip;
+	for(j = 0, count = 1,seat_vip = 1; j < size; j++,count++,seat_vip++){
+						
+						if(flights[j] == true && seat_vip >8)
+							setColor("GREEN");
+							
+						else if(seat_vip <= 8 && flights[j] != false)
+							setColor("YELLOW");
+							
+						else
+							setColor("RED");
+							
+						if(count == 8){
+							
+							printf("%d%s   \n\n", j+1, flights[j] == true ? "[L]" : "[R]");
+							count = 0;
+						}
+						else
+							printf("%d%s   ", j+1, flights[j] == true ? "[L]" : "[R]");
+						}
+}
+
 int main(void){
 	
 	setlocale(LC_ALL, "portuguese");
 	
 	
 	int option, i, j, k, count, seat_vip, num_flight, num_seat, access = 0, confirm;
+	
+	double value_passage;
 	
 	bool flights[4][38], isOk;
 	
@@ -98,25 +124,7 @@ int main(void){
 					
 					printf("\n\nVOO %d : \n\n", i+1);
 					
-					for(j = 0, count = 1,seat_vip = 1; j < size_flights_2; j++,count++,seat_vip++){
-					
-					if(flights[i][j] == true && seat_vip >8)
-						setColor("GREEN");
-						
-					else if(seat_vip <= 8 && flights[i][j] != false)
-						setColor("YELLOW");
-						
-					else
-						setColor("RED");
-						
-					if(count == 8){
-						
-						printf("%d%s   \n\n", j+1, flights[i][j] == true ? "[L]" : "[R]");
-						count = 0;
-					}
-					else
-						printf("%d%s   ", j+1, flights[i][j] == true ? "[L]" : "[R]");
-					}
+					showSeats(size_flights_2, flights[i]);
 					setColor("DEFAULT");
 				}
 				
@@ -141,25 +149,7 @@ int main(void){
 						
 						printf("\n\nVOO %d : \n\n", num_flight);
 				
-						for(j = 0, count = 1,seat_vip = 1; j < size_flights_2; j++,count++,seat_vip++){
-						
-						if(flights[num_flight-1][j] == true && seat_vip >8)
-							setColor("GREEN");
-							
-						else if(seat_vip <= 8 && flights[num_flight-1][j] != false)
-							setColor("YELLOW");
-							
-						else
-							setColor("RED");
-							
-						if(count == 8){
-							
-							printf("%d%s   \n\n", j+1, flights[num_flight-1][j] == true ? "[L]" : "[R]");
-							count = 0;
-						}
-						else
-							printf("%d%s   ", j+1, flights[num_flight-1][j] == true ? "[L]" : "[R]");
-						}
+						showSeats(size_flights_2, flights[num_flight-1]);
 						setColor("DEFAULT");
 						
 					}
@@ -171,7 +161,8 @@ int main(void){
 			break;
 				
 			case 3:
-					
+				
+				value_passage = 0;
 				do{
 					
 					
@@ -196,7 +187,7 @@ int main(void){
 						
 						else					
 						{							
-						
+							
 							printf("\ninsira o numero do assento que deseja reservar : ");
 							scanf("%d", &num_seat);	
 							
@@ -217,6 +208,12 @@ int main(void){
 								else{
 								
 									flights[num_flight-1][num_seat-1] = false;
+									
+									if( num_seat <= 8 )
+										value_passage += 150.00;
+									else 
+										value_passage += 80.00;
+										
 									isOk = true;
 									
 									access += 1;
@@ -231,7 +228,8 @@ int main(void){
 				
 				access = 0;
 				
-				printf("\n");		
+				printf("\nValor da compra : R$ %.2f\n\n", value_passage);	
+					
 								
 			break;
 			
