@@ -197,8 +197,6 @@ int main(void){
 						isOk = false;
 					}
 					
-					
-					
 					else{
 						
 						bool hasVacancy = in_array_bool(true, flights[num_flight-1]);
@@ -228,31 +226,48 @@ int main(void){
 								}
 									
 								else{
-								
-									flights[num_flight-1][num_seat-1] = false;
 									
+									access += 1;
+									
+									flights[num_flight-1][num_seat-1] = false;
+										
 									if( num_seat <= 8 )
 										value_passage += 150.00;
 									else 
 										value_passage += 80.00;
 										
 									isOk = true;
-									
-									access += 1;
+									if(access == 2){
+										do{
+											
+											
+										
+												printf("Deseja Confirmar A Reserva ( 1 - Sim  2 - Não ? ) : ");
+												scanf("%d", &confirm);
+												
+												if(confirm < 0 && confirm > 2)
+													printf("Valor de entrada inválido .\n");
+													
+												else if(confirm == 1){
+													
+													printf("\nValor da(s) reserva(s) : R$ %.2f\n\n", value_passage);
+												}
+													
+												else if(confirm == 2)
+													printf("\nOperação cancelada . \n\n");
+											
+										}while(confirm != 1 && confirm != 2);
+									}
 								}
 							}
 						}
 					}
 					
-					
-					
 				}while(isOk != true && num_flight != -1 || num_flight != -1 && access != 2);
 				
 				access = 0;
-				
-				printf("\nValor da compra : R$ %.2f\n\n", value_passage);	
 					
-								
+				
 			break;
 			
 			/* Aqui é aonde o usuário cancela uma reserva feito indicando o VOO e o numero do lugar reservado */
