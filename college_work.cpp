@@ -6,11 +6,9 @@
 #include <stdbool.h>
 
 // funcao para setar uma cor para a fonte do console
-void setColor(char * Color){
+void setColor(const char * Color){
 	
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-    WORD saved_attributes;
 	
 	//Cor vermelha
 	if(strcmp(Color, "RED") == 0){
@@ -59,30 +57,54 @@ void showSeats(int size, bool * flights){
 	int j, count, seat_vip;
 	for(j = 0, count = 1,seat_vip = 1; j < size; j++,count++,seat_vip++){
 						
-						//se as poltronas não forem de primeira classe e não estiverem ocupadas são coloridas de verde
-						if(flights[j] == true && seat_vip >8)
-							setColor("GREEN");
-						
-						//se as poltronas são de primeira classe e não estão ocupadas são coloridas de amarelo
-						else if(seat_vip <= 8 && flights[j] != false)
-							setColor("YELLOW");
-						
-						// Não sendo nenhum dos casos acima colore de vermelho , pois está reservada
-						else
-							setColor("RED");
-						
-						// se ja foram 8 poltronas impressas haverá uma quebra de linha , isso a cada 8 poltronas impressas
-						if(count == 8){
-							
-							printf("%d%s   \n\n", j+1, flights[j] == true ? "[L]" : "[R]");
-							
-							//seta o numero de poltronas impressas para 0 para retornar a imprimir uma ao lado da outra
-							count = 0;
-						}
-						// caso não forem 8 ao todo impressas continuam imprimindo uma ao lado da outra .
-						else
-							printf("%d%s   ", j+1, flights[j] == true ? "[L]" : "[R]");
-						}
+				//se as poltronas não forem de primeira classe e não estiverem ocupadas são coloridas de verde
+				if(flights[j] == true && seat_vip >8)
+					setColor("GREEN");
+				
+				//se as poltronas são de primeira classe e não estão ocupadas são coloridas de amarelo
+				else if(seat_vip <= 8 && flights[j] != false)
+					setColor("YELLOW");
+				
+				// Não sendo nenhum dos casos acima colore de vermelho , pois está reservada
+				else
+					setColor("RED");
+				
+				// se ja foram 8 poltronas impressas haverá uma quebra de linha , isso a cada 8 poltronas impressas
+				if(count == 8 && seat_vip == 8){
+                         
+                    printf("%d%s   \n\n", j+1, flights[j] == true ? "[L]" : "[R]");							
+					//seta o numero de poltronas impressas para 0 para retornar a imprimir uma ao lado da outra
+					count = 0;
+				}
+
+				// caso não forem 8 ao todo impressas continuam imprimindo uma ao lado da outra .
+				else if(seat_vip <8){
+                    
+                    if(seat_vip == 2 || seat_vip == 6)
+				    	printf("%d%s", j+1, flights[j] == true ? "[L]" : "[R]");
+				    	
+					else if(seat_vip == 4 || seat_vip == 8)
+					    printf("%d%s  \n\n", j+1, flights[j] == true ? "[L]" : "[R]");
+					    
+                    else
+					    printf("       %d%s ", j+1, flights[j] == true ? "[L]" : "[R]");
+                }
+                else{
+                    
+                    if(count == 3)
+                        printf("%d%s       ", j+1, flights[j] == true ? "[L]" : "[R]");             
+                    
+                    else if(count == 6){
+
+                        printf("%d%s \n\n", j+1, flights[j] == true ? "[L]" : "[R]");
+                        count = 0;
+                    }
+                    
+                    else
+                        printf(j+1 == 9 ? " %d%s " : "%d%s ", j+1, flights[j] == true ? "[L]" : "[R]");
+                }
+                
+       }
 }
 
 int main(void){
@@ -90,7 +112,7 @@ int main(void){
 	setlocale(LC_ALL, "portuguese");
 	
 	// declaracao de variaveis iniciais
-	int option, i, j, k, count, seat_vip, num_flight, num_seat, access = 0, confirm;
+	int option, i, j, k, count, seat_vip, num_flight, num_seat, access = 0, confirm, num_reserve;
 	
 	double value_passage;
 	
@@ -110,10 +132,15 @@ int main(void){
 	int size_flights = sizeof(flights) / sizeof(flights[0]);
 	int size_flights_2 = sizeof(flights[0]) / sizeof(flights[0][0]);
 	
-	char * options[5] = { "1 - Consultar Trechos", "2 - Consultar assentos", "3 - Efetuar reserva", "4 - Cancelar reserva", "5 - Finalizar atendimento"};
+	const char * options[5] = { "1 - Consultar Trechos", "2 - Consultar assentos", "3 - Efetuar reserva", "4 - Cancelar reserva", "5 - Finalizar atendimento"};
 	
 	// declaração de variavel size para obter o valor do tamanho  do array, e variavel i para ser o contador no for
 	int size = sizeof(options) / sizeof(options[0]);
+	
+	//imprime mensagem de boas vindas .
+	system("Color 03");
+	printf("            -------- Seja Bem Vindo A Aviação Trem De Pouso ------- \n\n");
+    setColor("DEFAULT");
 	
 	do{
 	
@@ -184,87 +211,93 @@ int main(void){
 			case 3:
 				
 				value_passage = 0;
-				//repete-se a escolha de opcoes caso a entrada for diferente de -1 e não estiver Ok a reserva de poltronas
-				do{
-					
-					
-					printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
-					scanf("%d", &num_flight);
-					
-					if(num_flight <= 0 || num_flight > 4){
-					
-						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
-						isOk = false;
-					}
-					
-					else{
+
+				printf("\n\ninsira quantas poltras deseja reservar ou -1 para sair : ");
+				scanf("%d", &num_reserve);
+				
+				if(num_reserve <= 0 || num_reserve > 2)
+					printf(num_reserve == -1 ? "\nOperação cancelada .\n\n" :"\nSó pode ser reservado 1 ou 2 poltronas .\n\n");
+				
+				else {
+	
+					//repete-se a escolha de opcoes caso a entrada for diferente de -1 e não estiver Ok a reserva de poltronas
+					do{
+																		
+						printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
+						scanf("%d", &num_flight);
 						
-						bool hasVacancy = in_array_bool(true, flights[num_flight-1]);
+						if(num_flight <= 0 || num_flight > 4){
 						
-						if(!hasVacancy){
-							printf("Este Voo Não Possui Mais Vagas .");
+							printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
+							isOk = false;
 						}
 						
-						else					
-						{							
+						else{
 							
-							printf("\ninsira o numero do assento que deseja reservar : ");
-							scanf("%d", &num_seat);	
+							bool hasVacancy = in_array_bool(true, flights[num_flight-1]);
 							
-							if(num_seat <= 0 || num_seat > 37 ){
-							
-								printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
-								isOk = false;
+							if(!hasVacancy){
+								printf("Este Voo Não Possui Mais Vagas .");
 							}
+							
+							else					
+							{							
 								
-							else{
+								printf("\ninsira o numero do assento que deseja reservar : ");
+								scanf("%d", &num_seat);	
 								
-								if(flights[num_flight-1][num_seat-1] == false){
+								if(num_seat <= 0 || num_seat > 38 ){
 								
-									printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+									printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
 									isOk = false;
 								}
 									
 								else{
 									
-									access += 1;
+									if(flights[num_flight-1][num_seat-1] == false){
 									
-									flights[num_flight-1][num_seat-1] = false;
+										printf("Este Assento Já Está Ocupado , Escolha Outro Por Favor .\n");
+										isOk = false;
+									}
 										
-									if( num_seat <= 8 )
-										value_passage += 150.00;
-									else 
-										value_passage += 80.00;
+									else{
 										
-									isOk = true;
-									if(access == 2){
-										do{
+										access += 1;
+										
+										flights[num_flight-1][num_seat-1] = false;
 											
+										if( num_seat <= 8 )
+											value_passage += 150.00;
+										else 
+											value_passage += 80.00;
 											
-										
-												printf("Deseja Confirmar A Reserva ( 1 - Sim  2 - Não ? ) : ");
-												scanf("%d", &confirm);
+										isOk = true;
+										if(access == num_reserve){
+											do{
 												
-												if(confirm < 0 && confirm > 2)
-													printf("Valor de entrada inválido .\n");
+													printf("Deseja Confirmar A Reserva ( 1 - Sim  2 - Não ? ) : ");
+													scanf("%d", &confirm);
 													
-												else if(confirm == 1){
-													
-													printf("\nValor da(s) reserva(s) : R$ %.2f\n\n", value_passage);
-												}
-													
-												else if(confirm == 2)
-													printf("\nOperação cancelada . \n\n");
-											
-										}while(confirm != 1 && confirm != 2);
+													if(confirm < 0 && confirm > 2)
+														printf("Valor de entrada inválido .\n");
+														
+													else if(confirm == 1){
+														
+														printf("\nValor da(s) reserva(s) : R$ %.2f\n\n", value_passage);
+													}
+														
+													else if(confirm == 2)
+														printf("\nOperação cancelada . \n\n");
+												
+											}while(confirm != 1 && confirm != 2);
+										}
 									}
 								}
 							}
 						}
-					}
-					
-				}while(isOk != true && num_flight != -1 || num_flight != -1 && access != 2);
-				
+						
+					}while(isOk != true && num_flight != -1 || num_flight != -1 && access != num_reserve);
+				}
 				access = 0;
 					
 				
@@ -290,7 +323,7 @@ int main(void){
 						printf("\ninsira o numero do assento que deseja cancelar a reserva : ");
 						scanf("%d", &num_seat);	
 						
-						if(num_seat <= 0 || num_seat > 37 ){
+						if(num_seat <= 0 || num_seat > 38 ){
 						
 							printf("Número De Assento Inexistente, Por Favor Escolha outro . \n");
 							isOk = false;
@@ -305,9 +338,10 @@ int main(void){
 							}
 								
 							else{
-							
+								
 								flights[num_flight-1][num_seat-1] = true;
 								isOk = true;
+								printf("\nReserva cancelada com sucesso  .\n");
 							}
 						}
 					}
@@ -326,12 +360,12 @@ int main(void){
 	
 	// ao finalizar toda a tarefa não tendo mais neccessidade de fazer algo no sistema o usuário pula para cá e pode-se finalizar o programa...
 	printf("\nObrigado por utilizar a linha Aviação Trem de Pouso, tenha um bom dia .\n");
-	printf("\naperte qualquer tecla para sair !");
+	//printf("\naperte qualquer tecla para sair !\n");
 	
 	//comentado por causa de outros dev c++ que não precisam de system("pause") e return 0 ...
-	/*
+	
 		system("pause");
 		return 0;
-	*/
+	
 }	
 
