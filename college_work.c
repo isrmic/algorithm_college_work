@@ -212,7 +212,7 @@ int main(void){
 				
 				value_passage = 0;
 
-				printf("\n\ninsira quantas poltras deseja reservar ou -1 para sair : ");
+				printf("\n\ninsira quantas reservas deseja efetuar (1/2) ou -1 para sair : ");
 				scanf("%d", &num_reserve);
 				
 				if(num_reserve <= 0 || num_reserve > 2)
@@ -222,7 +222,7 @@ int main(void){
 	
 					//repete-se a escolha de opcoes caso a entrada for diferente de -1 e não estiver Ok a reserva de poltronas
 					do{
-																		
+						printf("\nreserva de número %d", access+1);											
 						printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
 						scanf("%d", &num_flight);
 						
@@ -262,35 +262,34 @@ int main(void){
 										
 									else{
 										
-										access += 1;
+										access += 1;							
 										
-										flights[num_flight-1][num_seat-1] = false;
-											
-										if( num_seat <= 8 )
-											value_passage += 150.00;
-										else 
-											value_passage += 80.00;
 											
 										isOk = true;
-										if(access == num_reserve){
-											do{
+										
+										do{
+											
+												printf("Deseja Confirmar A Reserva ( 1 - Sim  2 - Não ? ) : ");
+												scanf("%d", &confirm);
 												
-													printf("Deseja Confirmar A Reserva ( 1 - Sim  2 - Não ? ) : ");
-													scanf("%d", &confirm);
+												if(confirm < 0 && confirm > 2)
+													printf("Valor de entrada inválido .\n");
 													
-													if(confirm < 0 && confirm > 2)
-														printf("Valor de entrada inválido .\n");
-														
-													else if(confirm == 1){
-														
+												else if(confirm == 1){
+													
+													flights[num_flight-1][num_seat-1] = false;
+											
+													if( num_seat <= 8 )
+														value_passage += 150.00;
+													else 
+														value_passage += 80.00;
+													if(access == num_reserve){
 														printf("\nValor da(s) reserva(s) : R$ %.2f\n\n", value_passage);
-													}
-														
-													else if(confirm == 2)
-														printf("\nOperação cancelada . \n\n");
-												
-											}while(confirm != 1 && confirm != 2);
-										}
+													}	
+												}
+											
+										}while(confirm != 1 && confirm != 2);
+										
 									}
 								}
 							}
