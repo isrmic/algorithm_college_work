@@ -105,6 +105,7 @@ void showSeats(int size, bool * flights){
                 }
                 
        }
+       setColor("DEFAULT");
 }
 
 int main(void){
@@ -188,7 +189,7 @@ int main(void){
 					
 					if(num_flight <= 0 || num_flight > 4){
 					
-						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
+						printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente." : "\n");
 						isOk = false;
 					}
 							
@@ -211,7 +212,7 @@ int main(void){
 			case 3:
 				
 				value_passage = 0;
-
+								
 				printf("\n\ninsira quantas reservas deseja efetuar (1/2) ou -1 para sair : ");
 				scanf("%d", &num_reserve);
 				
@@ -225,21 +226,22 @@ int main(void){
 						printf("\nreserva de número %d", access+1);											
 						printf("\n\ninsira o numero do VOO ou -1 para cancelar : ");
 						scanf("%d", &num_flight);
-						
+						printf("\n");
 						if(num_flight <= 0 || num_flight > 4){
 						
-							printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente . \n" : "\n");
+							printf(num_flight != -1 ? "Número De Voo Inexistente , tente novamente. \n" : "\n");
 							isOk = false;
 						}
 						
 						else{
 							
+							showSeats(size_flights_2, flights[num_flight-1]);
 							bool hasVacancy = in_array_bool(true, flights[num_flight-1]);
 							
 							if(!hasVacancy){
 								printf("Este Voo Não Possui Mais Vagas .");
 							}
-							
+														
 							else					
 							{							
 								
